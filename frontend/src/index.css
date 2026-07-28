@@ -1,0 +1,200 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer utilities {
+  .font-sans {
+    font-family: 'Inter', 'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+
+  /* Typography Scale */
+  .text-page-title {
+    font-size: 32px;
+    line-height: 40px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+
+  .text-section-title {
+    font-size: 22px;
+    line-height: 28px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  .text-card-title {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 700;
+  }
+
+  .text-body {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+  }
+
+  .text-helper {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+  }
+
+  /* Accent Glassmorphism (Header, Sidebar, Hero Rec, Modals) */
+  .accent-glass {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.06), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+  }
+
+  .dark .accent-glass {
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  }
+
+  /* Crisp Enterprise SaaS Cards - Elevation Levels */
+  .dashboard-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+    color: #0f172a;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .dark .dashboard-card {
+    background-color: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
+    color: #f8fafc;
+  }
+
+  /* Level 1 Card (Small cards, metric items) */
+  .card-elevation-1 {
+    box-shadow: 0 2px 10px -1px rgba(15, 23, 42, 0.04), 0 1px 3px 0 rgba(15, 23, 42, 0.02);
+  }
+  
+  .dark .card-elevation-1 {
+    box-shadow: 0 2px 10px -1px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Level 2 Hero Card */
+  .card-elevation-2 {
+    box-shadow: 0 12px 36px -6px rgba(15, 23, 42, 0.1), 0 4px 16px -2px rgba(15, 23, 42, 0.05);
+  }
+
+  .dark .card-elevation-2 {
+    box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Level 3 Modal / Dialog */
+  .card-elevation-3 {
+    box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.18), 0 8px 24px -4px rgba(15, 23, 42, 0.08);
+  }
+
+  .dark .card-elevation-3 {
+    box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.7);
+  }
+
+  .dashboard-card-hover:hover {
+    transform: translateY(-2px);
+    border-color: #cbd5e1;
+    box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.12);
+  }
+
+  .dark .dashboard-card-hover:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.45);
+  }
+
+  /* Ambient Mesh Background */
+  .ambient-mesh {
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.06) 0px, transparent 50%),
+      radial-gradient(at 50% 0%, rgba(99, 102, 241, 0.04) 0px, transparent 50%);
+  }
+
+  .dark .ambient-mesh {
+    background-image: 
+      radial-gradient(at 10% 10%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
+      radial-gradient(at 90% 90%, rgba(6, 182, 212, 0.04) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(99, 102, 241, 0.03) 0px, transparent 50%);
+  }
+
+  /* Skeleton Shimmer Loading Placeholder */
+  .skeleton-pulse {
+    background: linear-gradient(90deg, rgba(241, 245, 249, 0.9) 25%, rgba(226, 232, 240, 1) 50%, rgba(241, 245, 249, 0.9) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s infinite linear;
+  }
+
+  .dark .skeleton-pulse {
+    background: linear-gradient(90deg, rgba(30, 41, 59, 0.7) 25%, rgba(51, 65, 85, 0.8) 50%, rgba(30, 41, 59, 0.7) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s infinite linear;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Sleek Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #090d16;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+html {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Geist', -apple-system, system-ui, sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+  overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dark body {
+  background-color: #090d16;
+  color: #f8fafc;
+}

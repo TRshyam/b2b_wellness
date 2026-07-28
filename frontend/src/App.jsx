@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { API_BASE_URL, VERCEL_BACKEND_URL } from './config/api';
+import { API_BASE_URL, VERCEL_FULL_URL } from './config/api';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import SearchModal from './components/SearchModal';
@@ -167,7 +167,7 @@ function MainAppContent() {
                 ⚠️ Vercel Deployment Protection Active
               </span>
               <p>
-                The deployed backend (<code className="font-mono bg-amber-500/20 px-1 py-0.5 rounded">{VERCEL_BACKEND_URL}</code>) has Vercel Deployment Protection (Vercel Authentication) enabled.
+                The deployed backend (<code className="font-mono bg-amber-500/20 px-1 py-0.5 rounded">{VERCEL_FULL_URL}</code>) has Vercel Deployment Protection (Vercel Authentication) enabled.
               </p>
               <p className="text-[11px] text-slate-600 dark:text-slate-400">
                 To allow public client access, disable deployment protection in your Vercel Dashboard: <strong>Project Settings → Deployment Protection → Vercel Authentication → Off</strong>.

@@ -2,9 +2,7 @@ import json
 import urllib.request
 import urllib.error
 
-# BASE_URL = "http://localhost:8000/api"
-# BASE_URL = "https://b2b-wellness-g3ow-97rmi935p-shyam-s-projects-4d8c3cb5.vercel.app/"
-BASE_URL = "https://b2b-wellness-g3ow.vercel.app"
+BASE_URL = "http://localhost:8000/api"
 
 
 def http_post(url, body, token=None):
@@ -26,7 +24,11 @@ def http_get(url, token=None):
         with urllib.request.urlopen(req) as resp:
             return resp.status, json.loads(resp.read().decode('utf-8'))
     except urllib.error.HTTPError as e:
-        return e.code, json.loads(e.read().decode('utf-8'))
+        body = e.read().decode('utf-8')
+        try:
+            return e.code, json.loads(body)
+        except Exception:
+            return e.code, {"detail": body}
 
 print("=== STARTING LIVE AUTHENTICATION END-TO-END VERIFICATION ===")
 

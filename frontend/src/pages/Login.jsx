@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { VERCEL_BACKEND_URL, LOCAL_BACKEND_URL, getApiBaseUrl, setApiBaseUrl } from '../config/api';
-import { Sparkles, ShieldCheck, Mail, Lock, AlertCircle, ArrowRight, Sun, Moon, Server, RefreshCw } from 'lucide-react';
+import { VERCEL_DOMAIN_URL, VERCEL_DEPLOYMENT_URL, LOCAL_BACKEND_URL, getApiBaseUrl, setApiBaseUrl } from '../config/api';
+import { Sparkles, Mail, Lock, AlertCircle, ArrowRight, Sun, Moon, Server, ExternalLink } from 'lucide-react';
 
 export default function Login({ onNavigate }) {
   const { login } = useAuth();
@@ -32,9 +32,9 @@ export default function Login({ onNavigate }) {
     try {
       const res = await login(email, password);
       if (!res.success) {
-        if (res.isCorsPreflightBlocked || res.isVercelProtected) {
+        if (res.isCorsPreflightBlocked || res.isVercelProtected || res.is404Error) {
           setCorsNotice(true);
-          setError(res.error || 'Vercel Deployment Protection is active and blocking CORS requests.');
+          setError(res.message || 'CORS preflight error or 404 Not Found connecting to Vercel API.');
         } else {
           setError(res.error || 'Authentication failed. Please check credentials.');
         }
@@ -57,19 +57,19 @@ export default function Login({ onNavigate }) {
         {/* Backend Target Selector */}
         <div className="flex items-center p-1 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-white/10 text-xs font-semibold shadow-sm">
           <button
-            onClick={() => handleToggleBackend(VERCEL_BACKEND_URL)}
+            onClick={() => handleToggleBackend(VERCEL_DOMAIN_URL)}
             className={`px-2.5 py-1 rounded-lg transition-all ${
-              activeUrl.includes('vercel.app')
+              activeUrl === VERCEL_DOMAIN_URL
                 ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            Vercel API
+            Vercel Domain
           </button>
           <button
             onClick={() => handleToggleBackend(LOCAL_BACKEND_URL)}
             className={`px-2.5 py-1 rounded-lg transition-all ${
-              activeUrl.includes('localhost')
+              activeUrl === LOCAL_BACKEND_URL
                 ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
@@ -102,7 +102,7 @@ export default function Login({ onNavigate }) {
             </p>
           </div>
 
-          {/* Error & CORS Troubleshooting Notice */}
+          {/* Error & Vercel Protection Troubleshooting Notice */}
           {error && (
             <div className="p-4 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-800 dark:text-rose-200 text-xs space-y-2">
               <div className="flex items-start space-x-2">
@@ -110,13 +110,13 @@ export default function Login({ onNavigate }) {
                 <span className="font-bold">{error}</span>
               </div>
 
-              {corsNotice && activeUrl.includes('vercel.app') && (
+              {corsNotice && (
                 <div className="pt-2 border-t border-rose-500/20 text-[11px] space-y-2 text-slate-700 dark:text-slate-300">
                   <p>
-                    <strong>Why this happens:</strong> Vercel's edge protection redirects OPTIONS CORS requests.
+                    <strong>Why this happens:</strong> As shown in your Vercel Dashboard, <strong>Standard Protection</strong> (Deployment Protection) is currently enabled.
                   </p>
                   <p>
-                    <strong>Fix:</strong> Disable Vercel Authentication in Vercel Dashboard (<strong>Settings → Deployment Protection → Off</strong>), or switch to <strong>Local Server</strong> above.
+                    <strong>How to fix in Vercel:</strong> Go to Vercel Dashboard → <strong>Settings → Deployment Protection → Turn OFF</strong>.
                   </p>
                   <button
                     onClick={() => handleToggleBackend(LOCAL_BACKEND_URL)}
@@ -203,7 +203,7 @@ export default function Login({ onNavigate }) {
 
           {/* Footer Target API Indicator & Preset Credentials */}
           <div className="pt-2 border-t border-slate-200 dark:border-white/10 text-center space-y-1">
-            <span className="text-[11px] text-slate-500 block truncate">API Source: {activeUrl}</span>
+            <span className="text-[11px] text-slate-500 block truncate">Active API Target: {activeUrl}</span>
             <div className="flex justify-center gap-3 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
               <button
                 onClick={() => { setEmail('priya.ramesh@xyz.com'); setPassword('Password123!'); }}

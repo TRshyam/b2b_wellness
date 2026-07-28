@@ -1,4 +1,5 @@
 import os
+import shutil
 import sqlite3
 from datetime import datetime, timedelta, timezone
 from typing import Optional
@@ -13,10 +14,28 @@ ACCESS_TOKEN_EXPIRE_HOURS = 24
 
 security = HTTPBearer()
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "database", "wellness.db")
+# Base database path in repository
+BASE_DB_PATH = os.path.join(os.path.dirname(__file__), "database", "wellness.db")
+
+def get_target_db_path() -> str:
+    """
+    Returns writable DB path. In Vercel serverless environment (VERCEL=1),
+    copies wellness.db to /tmp/wellness.db on cold start.
+    """
+    if os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
+        tmp_db = "/tmp/wellness.db"
+        if not os.path.exists(tmp_db) and os.path.exists(BASE_DB_PATH):
+            try:
+                shutil.copy2(BASE_DB_PATH, tmp_db)
+            except Exception as e:
+                print(f"[Vercel DB Copy Warning] {e}")
+        if os.path.exists(tmp_db):
+            return tmp_db
+    return BASE_DB_PATH
 
 def get_db_conn():
-    conn = sqlite3.connect(DB_PATH)
+    db_path = get_target_db_path()
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")
     return conn

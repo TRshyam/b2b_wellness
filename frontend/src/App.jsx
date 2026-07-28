@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { API_BASE_URL, VERCEL_BACKEND_URL } from './config/api';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import SearchModal from './components/SearchModal';
@@ -26,10 +27,8 @@ import ResetPassword from './pages/ResetPassword';
 import Profile from './pages/Profile';
 import SettingsPage from './pages/Settings';
 
-const API_BASE = 'http://localhost:8000/api';
-
 function MainAppContent() {
-  const { token, user, loading, firstTimeUser, authFetch } = useAuth();
+  const { token, user, loading, firstTimeUser, authFetch, vercelProtectedNotice } = useAuth();
   const [route, setRoute] = useState('dashboard');
   const [resetToken, setResetToken] = useState(null);
 
@@ -47,6 +46,7 @@ function MainAppContent() {
 
   const [dashLoading, setDashLoading] = useState(true);
   const [selectedVendor, setSelectedVendor] = useState(null);
+  const [apiError, setApiError] = useState(null);
 
   // Global Keyboard Shortcut (⌘K / Ctrl+K for search)
   useEffect(() => {
@@ -76,39 +76,40 @@ function MainAppContent() {
   useEffect(() => {
     if (!token || !user) return;
     setDashLoading(true);
+    setApiError(null);
 
     Promise.all([
-      authFetch(`${API_BASE}/dashboard/wellness-snapshot`).then((r) => r.json()),
-      authFetch(`${API_BASE}/dashboard/recommendations`).then((r) => r.json()),
-      authFetch(`${API_BASE}/dashboard/upcoming-appointments`).then((r) => r.json()),
-      authFetch(`${API_BASE}/dashboard/registered-events`).then((r) => r.json()),
-      authFetch(`${API_BASE}/dashboard/service-usage`).then((r) => r.json()),
-      authFetch(`${API_BASE}/dashboard/v2-intelligence`).then((r) => r.json())
+      authFetch('/dashboard/wellness-snapshot').then((r) => r.ok ? r.json() : null),
+      authFetch('/dashboard/recommendations').then((r) => r.ok ? r.json() : null),
+      authFetch('/dashboard/upcoming-appointments').then((r) => r.ok ? r.json() : null),
+      authFetch('/dashboard/registered-events').then((r) => r.ok ? r.json() : null),
+      authFetch('/dashboard/service-usage').then((r) => r.ok ? r.json() : null),
+      authFetch('/dashboard/v2-intelligence').then((r) => r.ok ? r.json() : null)
     ])
       .then(([snapData, recData, apptData, evtData, usageData, v2Data]) => {
-        setSnapshot(snapData);
-        setRecommendations(recData.recommendations || []);
-        setAppointments(apptData);
-        setEvents(evtData);
-        setUsage(usageData);
-        setV2Intelligence(v2Data);
+        if (snapData) setSnapshot(snapData);
+        if (recData) setRecommendations(recData.recommendations || []);
+        if (apptData) setAppointments(apptData);
+        if (evtData) setEvents(evtData);
+        if (usageData) setUsage(usageData);
+        if (v2Data) setV2Intelligence(v2Data);
         setDashLoading(false);
       })
       .catch((err) => {
         console.error("Error loading protected dashboard data:", err);
+        setApiError("Unable to connect to Vercel API backend. Please check network connection.");
         setDashLoading(false);
       });
   }, [token, user]);
 
   const handleQuickAction = (appointmentId, action) => {
-    authFetch(`${API_BASE}/appointments/${appointmentId}/action`, {
+    authFetch(`/appointments/${appointmentId}/action`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action })
     })
       .then((res) => res.json())
       .then(() => {
-        return authFetch(`${API_BASE}/dashboard/upcoming-appointments`);
+        return authFetch('/dashboard/upcoming-appointments');
       })
       .then((r) => r.json())
       .then((data) => setAppointments(data))
@@ -118,9 +119,10 @@ function MainAppContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-[#090d16] flex items-center justify-center p-4 transition-colors">
-        <div className="text-center accent-glass p-8 rounded-3xl">
+        <div className="text-center accent-glass p-8 rounded-3xl max-w-md">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent mb-4"></div>
-          <p className="text-body font-bold text-slate-800 dark:text-slate-300">Authenticating with XYZ Corporate Systems...</p>
+          <p className="text-body font-bold text-slate-800 dark:text-slate-300">Connecting to Vercel Corporate Backend...</p>
+          <span className="text-xs text-slate-500 block mt-2 font-mono truncate">{API_BASE_URL}</span>
         </div>
       </div>
     );
@@ -157,6 +159,21 @@ function MainAppContent() {
             onToggleSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
             onOpenSearch={() => setIsSearchOpen(true)}
           />
+
+          {/* Vercel Deployment Protection Notice Banner */}
+          {vercelProtectedNotice && (
+            <div className="mb-6 p-4 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs space-y-1">
+              <span className="font-bold flex items-center gap-1">
+                ⚠️ Vercel Deployment Protection Active
+              </span>
+              <p>
+                The deployed backend (<code className="font-mono bg-amber-500/20 px-1 py-0.5 rounded">{VERCEL_BACKEND_URL}</code>) has Vercel Deployment Protection (Vercel Authentication) enabled.
+              </p>
+              <p className="text-[11px] text-slate-600 dark:text-slate-400">
+                To allow public client access, disable deployment protection in your Vercel Dashboard: <strong>Project Settings → Deployment Protection → Vercel Authentication → Off</strong>.
+              </p>
+            </div>
+          )}
 
           {route === 'profile' ? (
             <Profile onNavigate={handleNavigate} />

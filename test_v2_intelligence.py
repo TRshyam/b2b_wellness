@@ -1,7 +1,9 @@
 import json
 import urllib.request
 
-BASE_URL = "http://localhost:8000/api"
+# BASE_URL = "http://localhost:8000/api"
+BASE_URL = "https://b2b-wellness-g3ow-97rmi935p-shyam-s-projects-4d8c3cb5.vercel.app/"
+
 
 # Login Priya Ramesh
 req = urllib.request.Request(f"{BASE_URL}/auth/login", data=json.dumps({"email": "priya.ramesh@xyz.com", "password": "Password123!"}).encode('utf-8'), headers={'Content-Type': 'application/json'})

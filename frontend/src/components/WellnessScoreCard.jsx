@@ -4,10 +4,10 @@ import { TrendingUp, ShieldCheck } from 'lucide-react';
 export default function WellnessScoreCard({ score, category, forecast, persona }) {
   const getCategoryColor = (cat) => {
     switch (cat) {
-      case 'Excellent': return 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/30';
-      case 'Healthy': return 'bg-teal-500/15 text-teal-800 dark:text-teal-300 border-teal-500/30';
-      case 'Moderate': return 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30';
-      default: return 'bg-rose-500/15 text-rose-800 dark:text-rose-300 border-rose-500/30';
+      case 'Excellent': return 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30';
+      case 'Healthy': return 'bg-teal-500/15 text-teal-700 dark:text-teal-300 border-teal-500/30';
+      case 'Moderate': return 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30';
+      default: return 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30';
     }
   };
 
@@ -48,7 +48,7 @@ export default function WellnessScoreCard({ score, category, forecast, persona }
               <span className={`text-3xl font-black bg-gradient-to-r ${getScoreGradient(score)} bg-clip-text text-transparent`}>
                 {score}
               </span>
-              <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">/ 100</span>
+              <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-400">/ 100</span>
             </div>
           </div>
 
@@ -63,8 +63,8 @@ export default function WellnessScoreCard({ score, category, forecast, persona }
               Composite index based on 14-day sleep, hydration, mood, nutrition, exercise & stress.
             </p>
             {persona && (
-              <div className="pt-1 flex items-center gap-1.5 text-xs text-cyan-700 dark:text-cyan-300 font-bold">
-                <ShieldCheck className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+              <div className="pt-1 flex items-center gap-1.5 text-xs text-cyan-600 dark:text-cyan-300 font-semibold">
+                <ShieldCheck className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
                 <span>Persona: {persona.name} — "{persona.tagline}"</span>
               </div>
             )}
@@ -73,18 +73,18 @@ export default function WellnessScoreCard({ score, category, forecast, persona }
 
         {/* Wellness Forecast Potential Indicator */}
         {forecast && forecast.potential_gain > 0 && (
-          <div className="p-4 rounded-2xl bg-slate-100/80 dark:bg-slate-900/90 border border-slate-200 dark:border-emerald-500/30 flex flex-col justify-between shrink-0 md:w-64">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/90 border border-emerald-500/30 flex flex-col justify-between shrink-0 md:w-64">
             <div className="flex items-center justify-between text-helper mb-1">
-              <span className="text-slate-600 dark:text-slate-400 font-bold">30-Day Score Forecast</span>
-              <span className="text-emerald-700 dark:text-emerald-400 font-extrabold flex items-center gap-1">
+              <span className="text-slate-600 dark:text-slate-400 font-medium">30-Day Score Forecast</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                 <TrendingUp className="w-3.5 h-3.5" /> +{forecast.potential_gain} pts
               </span>
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-2xl font-black text-slate-900 dark:text-white">{forecast.forecast_score}</span>
-              <span className="text-xs text-slate-600 dark:text-slate-400 font-semibold">potential index</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">potential index</span>
             </div>
-            <span className="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
               Achievable by completing active recommendations below.
             </span>
           </div>

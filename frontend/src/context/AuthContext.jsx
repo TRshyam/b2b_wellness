@@ -1,14 +1,14 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-
-const API_BASE = 'http://localhost:8000/api';
+import { API_BASE_URL, apiFetch } from '../config/api';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem('aura_auth_token') || null);
+  const [token, setToken] = useState(localStorage.getItem('xyz_auth_token') || localStorage.getItem('aura_auth_token') || null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [firstTimeUser, setFirstTimeUser] = useState(null);
+  const [vercelProtectedNotice, setVercelProtectedNotice] = useState(false);
 
   // Fetch current authenticated user profile on mount or token change
   useEffect(() => {
@@ -19,19 +19,26 @@ export function AuthProvider({ children }) {
     }
 
     setLoading(true);
-    fetch(`${API_BASE}/auth/me`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
+    apiFetch('/auth/me')
       .then((res) => {
+        if (res.isVercelProtected) {
+          setVercelProtectedNotice(true);
+          setLoading(false);
+          return null;
+        }
         if (!res.ok) throw new Error('Token invalid');
         return res.json();
       })
       .then((data) => {
-        setUser(data);
+        if (data) {
+          setUser(data);
+          setVercelProtectedNotice(false);
+        }
         setLoading(false);
       })
       .catch(() => {
         // Token expired or invalid
+        localStorage.removeItem('xyz_auth_token');
         localStorage.removeItem('aura_auth_token');
         setToken(null);
         setUser(null);
@@ -41,33 +48,43 @@ export function AuthProvider({ children }) {
 
   // Login handler
   const login = async (email, password) => {
-    const res = await fetch(`${API_BASE}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
+    try {
+      const res = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+      });
 
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.detail || 'Login failed');
+      if (res.isVercelProtected) {
+        setVercelProtectedNotice(true);
+        return {
+          success: false,
+          error: 'Vercel Deployment Protection is active on this deployment. Please disable Vercel Authentication in your Vercel Project Settings (Settings -> Deployment Protection -> Off) to allow public API authentication.'
+        };
+      }
+
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.detail || 'Login failed. Please check credentials.' };
+      }
+
+      if (data.first_time_setup) {
+        setFirstTimeUser(data);
+        return { success: true, first_time_setup: true, data };
+      }
+
+      localStorage.setItem('xyz_auth_token', data.access_token);
+      setToken(data.access_token);
+      setUser(data.employee);
+      return { success: true, first_time_setup: false, user: data.employee };
+    } catch (err) {
+      return { success: false, error: 'Network error communicating with backend API.' };
     }
-
-    if (data.first_time_setup) {
-      setFirstTimeUser(data);
-      return { first_time_setup: true, data };
-    }
-
-    localStorage.setItem('aura_auth_token', data.access_token);
-    setToken(data.access_token);
-    setUser(data.employee);
-    return { first_time_setup: false, user: data.employee };
   };
 
   // First time password creation handler
   const createPassword = async (employeeId, newPassword) => {
-    const res = await fetch(`${API_BASE}/auth/create-password`, {
+    const res = await apiFetch('/auth/create-password', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ employee_id: employeeId, new_password: newPassword })
     });
 
@@ -76,7 +93,7 @@ export function AuthProvider({ children }) {
       throw new Error(data.detail || 'Password creation failed');
     }
 
-    localStorage.setItem('aura_auth_token', data.access_token);
+    localStorage.setItem('xyz_auth_token', data.access_token);
     setToken(data.access_token);
     setUser(data.employee);
     setFirstTimeUser(null);
@@ -86,11 +103,9 @@ export function AuthProvider({ children }) {
   // Logout handler
   const logout = () => {
     if (token) {
-      fetch(`${API_BASE}/auth/logout`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
-      }).catch(() => {});
+      apiFetch('/auth/logout', { method: 'POST' }).catch(() => {});
     }
+    localStorage.removeItem('xyz_auth_token');
     localStorage.removeItem('aura_auth_token');
     setToken(null);
     setUser(null);
@@ -99,12 +114,8 @@ export function AuthProvider({ children }) {
 
   // Change password handler
   const changePassword = async (oldPassword, newPassword) => {
-    const res = await fetch(`${API_BASE}/auth/change-password`, {
+    const res = await apiFetch('/auth/change-password', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
       body: JSON.stringify({ old_password: oldPassword, new_password: newPassword })
     });
     const data = await res.json();
@@ -113,12 +124,8 @@ export function AuthProvider({ children }) {
   };
 
   // Auth fetch wrapper helper
-  const authFetch = (url, options = {}) => {
-    const headers = {
-      ...options.headers,
-      'Authorization': `Bearer ${token}`
-    };
-    return fetch(url, { ...options, headers });
+  const authFetch = (endpoint, options = {}) => {
+    return apiFetch(endpoint, options);
   };
 
   return (
@@ -129,11 +136,13 @@ export function AuthProvider({ children }) {
         loading,
         firstTimeUser,
         setFirstTimeUser,
+        vercelProtectedNotice,
         login,
         createPassword,
         logout,
         changePassword,
-        authFetch
+        authFetch,
+        API_BASE_URL
       }}
     >
       {children}

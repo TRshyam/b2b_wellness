@@ -1,14 +1,13 @@
 /**
  * Centralized API Configuration for Corporate Wellness Dashboard
- * Connects to Vercel production backend by default, with environment variable override & local fallback.
+ * Connected to live operational production backend: https://b2b-wellness-bh3d.vercel.app/api
  */
 
-export const VERCEL_DOMAIN_URL = 'https://b2b-wellness-g3ow.vercel.app/api';
-export const VERCEL_DEPLOYMENT_URL = 'https://b2b-wellness-g3ow-8ce573pxw-shyam-s-projects-4d8c3cb5.vercel.app/api';
-export const VERCEL_FULL_URL = VERCEL_DOMAIN_URL;
+export const VERCEL_DOMAIN_URL = 'https://b2b-wellness-bh3d.vercel.app/api';
+export const VERCEL_FULL_URL = 'https://b2b-wellness-bh3d.vercel.app/api';
 export const LOCAL_BACKEND_URL = 'http://localhost:8000/api';
 
-// Default to Vercel production domain
+// Prioritize environment variable (VITE_API_URL), then live Vercel production backend
 let currentApiBaseUrl = import.meta.env.VITE_API_URL || VERCEL_DOMAIN_URL;
 
 export const API_BASE_URL = currentApiBaseUrl;

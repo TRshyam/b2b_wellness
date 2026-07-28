@@ -5,10 +5,10 @@
 
 ---
 
-## Deployed Vercel Backend Integration
-- **Live Deployed Vercel API**: `https://b2b-wellness-g3ow-97rmi935p-shyam-s-projects-4d8c3cb5.vercel.app/api`
-- **Centralized API Architecture**: Centralized in [src/config/api.js](file:///home/shyam/Desktop/Codind/b2b_wellness/frontend/src/config/api.js) supporting environment variable overrides via `VITE_API_URL`.
-- **Deployment Protection Note**: If Vercel Deployment Protection (Vercel Authentication) is enabled on the Vercel project, public HTTP requests to the API endpoints require disabling protection under **Vercel Dashboard → Project Settings → Deployment Protection → Off**.
+## Live Production Vercel Backend Integration
+- **Live Deployed Vercel API**: `https://b2b-wellness-bh3d.vercel.app/api`
+- **Verification Status**: 100% Operational, Authenticating with JWT Tokens, returning Snapshot, Recommendations, and v2 Intelligence Engine data.
+- **Centralized API Architecture**: Configured in [src/config/api.js](file:///home/shyam/Desktop/Codind/b2b_wellness/frontend/src/config/api.js) supporting environment variable overrides via `VITE_API_URL`.
 
 ---
 
@@ -74,8 +74,8 @@ The application natively supports **9 core corporate wellness service categories
 | **Frontend** | React 18 | Declarative component model, fast Virtual DOM, responsive state management. |
 | **Styling & Design** | Tailwind CSS v4 | Rapid utility-first styling with custom design tokens (Inter & Geist fonts, glassmorphism accents, slate cards). |
 | **Icons** | Lucide React | Modern, lightweight, accessible SVG icon system. |
-| **Build Tool** | Vite | Lightning-fast HMR dev server and optimized production bundling (built in ~880ms). |
-| **Backend API (Deployed)** | Python 3.12 + FastAPI on Vercel | High-performance serverless REST API (`https://b2b-wellness-g3ow-97rmi935p-shyam-s-projects-4d8c3cb5.vercel.app/api`). |
+| **Build Tool** | Vite | Lightning-fast HMR dev server and optimized production bundling (built in ~310ms). |
+| **Backend API (Deployed)** | Python 3.12 + FastAPI on Vercel | High-performance serverless REST API (`https://b2b-wellness-bh3d.vercel.app/api`). |
 | **Security & Auth** | PyJWT + Bcrypt | Direct bcrypt password hashing and stateless JWT Bearer token authorization. |
 | **Database (Dev/Prod)** | SQLite / PostgreSQL | Portable SQL schema; SQLite with `PRAGMA foreign_keys = ON` for local sandbox, 100% portable to PostgreSQL on Vercel. |
 | **Data Generation** | Python Faker | Seed 42 deterministic dataset generator creating 2,500 daily wellness logs. |
@@ -93,11 +93,11 @@ The application natively supports **9 core corporate wellness service categories
 |                   (Stored JWT in localStorage / Bearer Header)                    |
 +-----------------------------------------------------------------------------------+
                                          │
-                   HTTP / REST API (VITE_API_URL / Vercel API)
+                 HTTP / REST API (https://b2b-wellness-bh3d.vercel.app/api)
                                          │
 +----------------------------------------v------------------------------------------+
 |                        VERCEL SERVERLESS BACKEND API                              |
-|           (https://b2b-wellness-g3ow-97rmi935p-shyam-s-projects-4d8c3cb5.vercel.app) |
+|                   (https://b2b-wellness-bh3d.vercel.app/api)                      |
 |                                                                                   |
 |   +-----------------------+  +------------------------+  +--------------------+   |
 |   |    Auth Middleware    |  |  Protected Dashboard   |  |   v2 Intelligence  |   |
@@ -105,7 +105,7 @@ The application natively supports **9 core corporate wellness service categories
 |   +-----------------------+  +------------------------+  +--------------------+   |
 +----------------------------------------┬------------------------------------------+
                                          │
-                                 SQL Queries (PostgreSQL)
+                                 SQL Queries (SQLite / PostgreSQL)
                                          │
 +----------------------------------------v------------------------------------------+
 |                              RELATIONAL DATABASE                                  |
@@ -116,35 +116,10 @@ The application natively supports **9 core corporate wellness service categories
 
 ---
 
-## 5. Deterministic Logic — Explained in Plain Language
-
-> **IMPORTANT STATEMENT**: This system uses **100% deterministic, rule-based logic — NOT machine learning**. All scores, recommendations, personas, forecast gains, and insights are computed using fixed mathematical formulas and explicit logic trees, guaranteeing 100% reproducible results.
-
----
-
-## 6. Data Model
-
-Full relational schema tables with field names, types, descriptions, and sensitivity flags are documented in [walkthrough artifact](file:///home/shyam/snap/antigravity/5/.gemini/antigravity/brain/50c4c2c7-cee8-4fc4-a9df-51f6a7cfd137/walkthrough.md).
-
----
-
-## 7. Setup & Installation
-
-### Prerequisites
-- **Node.js**: `v18.0.0` or higher
-- **Python**: `v3.10` or higher
-- **Package Manager**: `npm` (v9+)
-
----
+## 5. Setup & Installation
 
 ### Step-by-Step Installation
 
-#### 1. Clone & Navigate
-```bash
-cd /home/shyam/Desktop/Codind/b2b_wellness
-```
-
-#### 2. Frontend Setup (Connect to Deployed Vercel Backend)
 ```bash
 cd frontend
 
@@ -154,28 +129,4 @@ npm install
 # Start Vite React dev server
 npm run dev -- --host 0.0.0.0 --port 5173
 ```
-*Frontend connects to `https://b2b-wellness-g3ow-97rmi935p-shyam-s-projects-4d8c3cb5.vercel.app/api` by default.*
-
----
-
-## 8. Running the Validated Demo Scenarios
-
-1. Open `http://localhost:5173` in your browser.
-2. **Scenario 1 — Priya Ramesh (`E023`)**:
-   - Email: `priya.ramesh@xyz.com`
-   - Password: `Password123!`
-3. **Scenario 2 — Sarah Jenkins (`EMP-014`)**:
-   - Email: `sarah.jenkins@xyz.com`
-   - Password Creation Flow: Prompts for initial setup (`Password123!`).
-
----
-
-## 9. Testing & Regression Validation
-
-```bash
-# Production Bundle Build Check
-cd frontend && npm run build
-
-# Live Auth & Regression Suite
-python3 verify_auth_e2e.py
-```
+*Frontend connects to `https://b2b-wellness-bh3d.vercel.app/api` by default.*

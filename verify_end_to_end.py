@@ -2,8 +2,7 @@ import json
 import urllib.request
 
 # BASE_URL = "http://localhost:8000/api"
-BASE_URL = "https://b2b-wellness-g3ow-97rmi935p-shyam-s-projects-4d8c3cb5.vercel.app/"
-
+BASE_URL = "https://b2b-wellness-g3ow.vercel.app"
 
 def check(url, desc):
     req = urllib.request.Request(url)

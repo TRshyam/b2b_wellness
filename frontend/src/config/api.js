@@ -3,7 +3,7 @@
  * Connects to Vercel production backend by default, with environment variable override & local fallback.
  */
 
-export const VERCEL_BACKEND_URL = 'https://b2b-wellness-g3ow-97rmi935p-shyam-s-projects-4d8c3cb5.vercel.app/api';
+export const VERCEL_BACKEND_URL = 'https://b2b-wellness-g3ow.vercel.app/api';
 export const LOCAL_BACKEND_URL = 'http://localhost:8000/api';
 
 // Prioritize environment variable (VITE_API_URL), then Vercel deployed backend

@@ -3,7 +3,8 @@ import urllib.request
 import urllib.error
 
 # BASE_URL = "http://localhost:8000/api"
-BASE_URL = "https://b2b-wellness-g3ow-97rmi935p-shyam-s-projects-4d8c3cb5.vercel.app/"
+# BASE_URL = "https://b2b-wellness-g3ow-97rmi935p-shyam-s-projects-4d8c3cb5.vercel.app/"
+BASE_URL = "https://b2b-wellness-g3ow.vercel.app"
 
 
 def http_post(url, body, token=None):
